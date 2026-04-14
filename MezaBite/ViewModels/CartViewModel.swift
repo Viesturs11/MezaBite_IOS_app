@@ -9,48 +9,36 @@ import Foundation
 
 class CartViewModel: ObservableObject {
     
+    @Published var items: [CartItem] = []
     
-    @Published var items: [CartItem] = [] {
-        didSet {
-            objectWillChange.send()
-        }
-    }
-    
-    // ➕ pievienošana ar quantity
     func addToCart(_ product: Product) {
         if let index = items.firstIndex(where: { $0.product.id == product.id }) {
             items[index].quantity += 1
         } else {
-            let item = CartItem(id: product.id, product: product, quantity: 1)
-            items.append(item)
+            items.append(CartItem(product: product, quantity: 1))
         }
     }
     
-    // ➖ noņemšana
-    func removeFromCart(_ item: CartItem) {
-        if let index = items.firstIndex(where: { $0.id == item.id }) {
+    func increaseQuantity(at index: Int) {
+        guard items.indices.contains(index) else { return }
+        items[index].quantity += 1
+    }
+    
+    func decreaseQuantity(at index: Int) {
+        guard items.indices.contains(index) else { return }
+        
+        if items[index].quantity > 1 {
+            items[index].quantity -= 1
+        } else {
             items.remove(at: index)
         }
     }
     
-    // ➕➖ mainīt daudzumu
-    func increaseQuantity(_ item: CartItem) {
-        if let index = items.firstIndex(where: { $0.id == item.id }) {
-            items[index].quantity += 1
-        }
+    func removeFromCart(at index: Int) {
+        guard items.indices.contains(index) else { return }
+        items.remove(at: index)
     }
     
-    func decreaseQuantity(_ item: CartItem) {
-        if let index = items.firstIndex(where: { $0.id == item.id }) {
-            if items[index].quantity > 1 {
-                items[index].quantity -= 1
-            } else {
-                removeFromCart(item)
-            }
-        }
-    }
-    
-    // 💰 kopējā summa
     var totalPrice: Double {
         items.reduce(0) { $0 + ($1.product.price * Double($1.quantity)) }
     }

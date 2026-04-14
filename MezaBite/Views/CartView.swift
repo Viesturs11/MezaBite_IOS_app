@@ -15,7 +15,8 @@ struct CartView: View {
         NavigationStack {
             VStack {
                 List {
-                    ForEach(cartVM.items) { item in
+                    ForEach(Array(cartVM.items.enumerated()), id: \.element.id) { index, item in
+                        
                         HStack {
                             
                             VStack(alignment: .leading) {
@@ -26,22 +27,29 @@ struct CartView: View {
                             Spacer()
                             
                             HStack(spacing: 10) {
-                                Button("-") {
-                                    cartVM.decreaseQuantity(item)
+                                
+                                Button(action: {
+                                    cartVM.decreaseQuantity(at: index)
+                                }) {
+                                    Text("-")
                                 }
+                                .buttonStyle(.borderless)
                                 
                                 Text("\(item.quantity)")
                                     .frame(minWidth: 30)
                                 
-                                Button("+") {
-                                    cartVM.increaseQuantity(item)
+                                Button(action: {
+                                    cartVM.increaseQuantity(at: index)
+                                }) {
+                                    Text("+")
                                 }
+                                .buttonStyle(.borderless)
                             }
                         }
                     }
                     .onDelete { indexSet in
                         indexSet.forEach { index in
-                            cartVM.removeFromCart(cartVM.items[index])
+                            cartVM.removeFromCart(at: index)
                         }
                     }
                 }
