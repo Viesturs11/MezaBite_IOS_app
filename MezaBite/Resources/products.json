@@ -2,17 +2,59 @@
 
 [
   {
-    "id": "11111111-1111-1111-1111-111111111111",
-    "name": "Medus",
+    "id": "1",
+    "name": "Pavasara ziedu medus (400g)",
     "description": "Dabīgs Latvijas medus",
-    "price": 5.99,
+    "price": 4.50,
     "image": "honey"
   },
   {
-    "id": "22222222-2222-2222-2222-222222222222",
-    "name": "Sukādes",
-    "description": "Veselīgas sukādes",
-    "price": 3.49,
+    "id": "2",
+    "name": "Pavasara ziedu medus (1000g)",
+    "description": "Dabīgs Latvijas medus",
+    "price": 8.50,
+    "image": "honey"
+  },
+  {
+    "id": "3",
+    "name": "Griķu ziedu medus (400g)",
+    "description": "Stiprs un aromātisks medus",
+    "price": 4.50,
+    "image": "honey"
+  },
+  {
+    "id": "4",
+    "name": "Griķu ziedu medus (1000g)",
+    "description": "Stiprs un aromātisks medus",
+    "price": 8.50,
+    "image": "honey"
+  },
+  {
+    "id": "5",
+    "name": "Viršu ziedu medus (400g)",
+    "description": "Ekskluzīvs medus",
+    "price": 9.50,
+    "image": "honey"
+  },
+  {
+    "id": "6",
+    "name": "Viršu ziedu medus (1000g)",
+    "description": "Ekskluzīvs medus",
+    "price": 16.00,
+    "image": "honey"
+  },
+  {
+    "id": "7",
+    "name": "Cidoniju sukādes (300g)",
+    "description": "Dabīgas sukādes",
+    "price": 6.50,
+    "image": "candies"
+  },
+  {
+    "id": "8",
+    "name": "Ķirbju sukādes (200g)",
+    "description": "Dabīgas sukādes",
+    "price": 4.50,
     "image": "candies"
   }
 ]

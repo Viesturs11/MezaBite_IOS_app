@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct MezaBiteApp: App {
+    
+    @StateObject var cartVM = CartViewModel()
+    
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(cartVM)
         }
     }
 }

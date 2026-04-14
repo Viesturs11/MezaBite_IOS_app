@@ -11,6 +11,7 @@ class ProductsViewModel: ObservableObject {
     
     @Published var products: [Product] = []
     
+    
     private let repository = ProductRepository()
     
     func loadProducts() {

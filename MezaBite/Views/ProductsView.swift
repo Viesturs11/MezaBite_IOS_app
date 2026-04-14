@@ -10,13 +10,25 @@ import SwiftUI
 struct ProductsView: View {
     
     @StateObject private var viewModel = ProductsViewModel()
+    @EnvironmentObject var cartVM: CartViewModel
+    
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
     
     var body: some View {
         NavigationStack {
-            List(viewModel.products) { product in
-                NavigationLink(destination: ProductDetailView(product: product)) {
-                    Text(product.name)
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    
+                    ForEach(viewModel.products) { product in
+                        NavigationLink(destination: ProductDetailView(product: product)) {
+                            ProductCardView(product: product)
+                        }
+                    }
                 }
+                .padding()
             }
             .navigationTitle("Produkti")
             .onAppear {
