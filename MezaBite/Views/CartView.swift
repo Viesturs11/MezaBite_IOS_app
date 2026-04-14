@@ -58,8 +58,21 @@ struct CartView: View {
                 Text("Kopā: €\(cartVM.totalPrice, specifier: "%.2f")")
                     .font(.title2)
                     .bold()
-                    .padding()
+                    .padding(.top, 10)
+                
+                // 🛒 PASŪTĪT POGA 👇
+                NavigationLink(destination: OrderView()) {
+                    Text("Pasūtīt")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                }
+                .padding(.bottom, 10)
             }
+            
             .navigationTitle("Grozs")
         }
     }
