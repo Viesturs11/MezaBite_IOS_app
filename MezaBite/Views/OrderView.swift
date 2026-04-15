@@ -10,23 +10,20 @@
 //  MezaBite
 //
 //  Created by Viesturs Karlivans on 14/04/2026.
-//
+// Pagaidam ka rezerves variants!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import SwiftUI
 
 struct OrderView: View {
     
-    @EnvironmentObject var cartVM: CartViewModel
-    
-    var orderID: Int {
-        UserDefaults.standard.integer(forKey: "orderID") + 1
-    }
+    let order: Order?
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 
-                Text("Pasūtījums #\(orderID)")
+                // 🧾 ID
+                Text("Pasūtījums #\(order?.id ?? 0)")
                     .font(.title)
                     .bold()
                 
@@ -42,11 +39,11 @@ struct OrderView: View {
                 
                 Divider()
                 
-                // 🛒 Groza saturs
+                // 🛒 Pasūtījuma saturs
                 Text("Pasūtījuma saturs")
                     .font(.headline)
                 
-                ForEach(cartVM.items) { item in
+                ForEach(order?.items ?? []) { item in
                     HStack {
                         Text(item.product.name)
                         Spacer()
@@ -57,48 +54,28 @@ struct OrderView: View {
                 
                 Divider()
                 
-                Text("Kopā: €\(cartVM.totalPrice, specifier: "%.2f")")
+                // 💰 summa
+                Text("Kopā: €\(order?.total ?? 0, specifier: "%.2f")")
                     .font(.title2)
                     .bold()
                 
-                // 📧 Nosūtīt email
-                Button("Nosūtīt pasūtījumu") {
-                    sendEmail()
-                    saveOrderID()
+                // ✅ status
+                Text("Pasūtījums veiksmīgi nosūtīts ✅")
+                    .foregroundColor(.green)
+                    .padding(.top)
+                
+                // 🔙 atpakaļ poga (optional)
+                NavigationLink("Atpakaļ uz sākumu") {
+                    RootView()
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
+                .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
                 
             }
             .padding()
         }
-    }
-    
-    // 📧 email funkcija
-    func sendEmail() {
-        let subject = "Jauns pasūtījums #\(orderID)"
-        
-        var body = "Pasūtījums:\n\n"
-        
-        for item in cartVM.items {
-            body += "\(item.product.name) - \(item.quantity)x\n"
-        }
-        
-        body += "\nKopā: €\(cartVM.totalPrice)"
-        
-        let urlString = "mailto:info@mezabite.lv?subject=\(subject)&body=\(body)"
-            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        
-        if let url = URL(string: urlString) {
-            UIApplication.shared.open(url)
-        }
-    }
-    
-    // 🧾 saglabā ID
-    func saveOrderID() {
-        UserDefaults.standard.set(orderID, forKey: "orderID")
+        .navigationBarBackButtonHidden(true) // 🔥 neļauj atgriezties uz checkout
     }
 }

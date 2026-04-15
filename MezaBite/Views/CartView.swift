@@ -61,7 +61,7 @@ struct CartView: View {
                     .padding(.top, 10)
                 
                 // 🛒 PASŪTĪT POGA 👇
-                NavigationLink(destination: OrderView()) {
+                NavigationLink(destination: CheckoutView()) {
                     Text("Pasūtīt")
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -70,10 +70,8 @@ struct CartView: View {
                         .cornerRadius(12)
                         .padding(.horizontal)
                 }
-                .padding(.bottom, 10)
+                
+                .navigationTitle("Grozs")
             }
-            
-            .navigationTitle("Grozs")
         }
-    }
-}
+    }}
