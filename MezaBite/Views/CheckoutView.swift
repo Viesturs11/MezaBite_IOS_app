@@ -27,6 +27,7 @@ struct CheckoutView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                   
                     
                     Text("Pasūtījuma noformēšana")
                         .font(.title)
@@ -74,20 +75,19 @@ struct CheckoutView: View {
                 }
                 .padding()
                 
-                // 👉 automātiska pāreja uz OrderView
-                NavigationLink(
-                    destination: OrderView(order: createdOrder),
-                    isActive: $navigateToOrder
-                ) {
-                    EmptyView()
-                }
-            }
+              }
+        }
+        .navigationDestination(isPresented: $navigateToOrder) {
+            OrderView(order: createdOrder)
         }
     }
     
     // ✅ validācija
     var isValid: Bool {
-        !name.isEmpty && !phone.isEmpty && !address.isEmpty
+        !name.isEmpty &&
+        !address.isEmpty &&
+        email.contains("@") &&
+        phone.filter { $0.isNumber }.count >= 8
     }
     
     // 🚀 submit
