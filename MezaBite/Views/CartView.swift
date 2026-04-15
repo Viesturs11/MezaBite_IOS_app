@@ -14,38 +14,52 @@ struct CartView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                
                 List {
                     ForEach(Array(cartVM.items.enumerated()), id: \.element.id) { index, item in
                         
                         HStack {
                             
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 4) {
                                 Text(item.product.name)
+                                    .font(.headline)
+                                
                                 Text("€\(item.product.price, specifier: "%.2f")")
+                                    .foregroundColor(.gray)
                             }
                             
                             Spacer()
                             
-                            HStack(spacing: 10) {
+                            // ➕➖ pogas (UZLABOTAS)
+                            HStack(spacing: 12) {
                                 
                                 Button(action: {
                                     cartVM.decreaseQuantity(at: index)
                                 }) {
-                                    Text("-")
+                                    Image(systemName: "minus")
+                                        .frame(width: 32, height: 32)
+                                        .background(Color.gray.opacity(0.2))
+                                        .cornerRadius(8)
                                 }
                                 .buttonStyle(.borderless)
                                 
                                 Text("\(item.quantity)")
+                                    .font(.headline)
                                     .frame(minWidth: 30)
                                 
                                 Button(action: {
                                     cartVM.increaseQuantity(at: index)
                                 }) {
-                                    Text("+")
+                                    Image(systemName: "plus")
+                                        .frame(width: 32, height: 32)
+                                        .background(Color.green)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
                                 }
                                 .buttonStyle(.borderless)
                             }
                         }
+                        .padding(.vertical, 6)
                     }
                     .onDelete { indexSet in
                         indexSet.forEach { index in
@@ -55,23 +69,24 @@ struct CartView: View {
                 }
                 
                 // 💰 summa
-                Text("Kopā: €\(cartVM.totalPrice, specifier: "%.2f")")
-                    .font(.title2)
-                    .bold()
-                    .padding(.top, 10)
-                
-                // 🛒 PASŪTĪT POGA 👇
-                NavigationLink(destination: CheckoutView()) {
-                    Text("Pasūtīt")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
+                VStack(spacing: 10) {
+                    Text("Kopā: €\(cartVM.totalPrice, specifier: "%.2f")")
+                        .font(.title2)
+                        .bold()
+                    
+                    // 🛒 POGA
+                    NavigationLink(destination: CheckoutView()) {
+                        Text("Pasūtīt")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                    }
                 }
-                
-                .navigationTitle("Grozs")
+                .padding()
             }
+            .navigationTitle("Grozs")
         }
-    }}
+    }
+}
