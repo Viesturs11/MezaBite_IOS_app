@@ -14,45 +14,71 @@ struct ContactView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 
-                // 🖼 Bilde
+                // 🖼 BILDE
                 Image("stropi")
                     .resizable()
                     .scaledToFill()
                     .frame(height: 180)
                     .frame(maxWidth: .infinity)
                     .clipped()
-                    .cornerRadius(12)
-                    .shadow(radius: 5)
+                    .cornerRadius(16)
                 
                 Text("Kontakti")
                     .font(.title)
                     .bold()
+                    .foregroundColor(Color("TextPrimary"))
                 
-                // 📧 Epasts
-                HStack {
-                    Image(systemName: "envelope")
-                    Link("info@mezabite.lv", destination: URL(string: "mailto:info@mezabite.lv")!)
+                // 📇 KONTAKTU BLOKS
+                VStack(spacing: 12) {
+                    
+                    HStack {
+                        Image(systemName: "envelope.fill")
+                            .foregroundColor(Color("PrimaryColor"))
+                        
+                        Link("info@mezabite.lv",
+                             destination: URL(string: "mailto:info@mezabite.lv")!)
+                            .foregroundColor(Color("TextPrimary"))
+                    }
+                    
+                    HStack {
+                        Image(systemName: "phone.fill")
+                            .foregroundColor(Color("PrimaryColor"))
+                        
+                        Link("26495921",
+                             destination: URL(string: "tel:26495921")!)
+                            .foregroundColor(Color("TextPrimary"))
+                    }
+                    
+                    HStack(alignment: .top) {
+                        Image(systemName: "location.fill")
+                            .foregroundColor(Color("PrimaryColor"))
+                        
+                        Text("\"Saules\", Burtnieku pagasts,\nValmiera novads, Latvija")
+                            .foregroundColor(Color("TextPrimary"))
+                    }
                 }
+                .padding()
+                .background(Color("CardColor"))
+                .cornerRadius(16)
                 
-                // 📞 Telefons
-                HStack {
-                    Image(systemName: "phone")
-                    Link("26495921", destination: URL(string: "tel:26495921")!)
+                // 🗺 KARTE BLOKĀ
+                VStack(alignment: .leading, spacing: 10) {
+                    
+                    Text("Atrašanās vieta")
+                        .font(.headline)
+                        .foregroundColor(Color("TextPrimary"))
+                    
+                    MapView()
                 }
-                
-                // 📍 Adrese
-                HStack(alignment: .top) {
-                    Image(systemName: "location")
-                    Text("\"Saules\", Burtnieku pagasts,\nValmiera novads, Latvija")
-                }
-                
-                // 🗺 KARTE
-                MapView()
+                .padding()
+                .background(Color("CardColor"))
+                .cornerRadius(16)
                 
                 Spacer()
             }
             .padding()
         }
+        .background(Color("BackgroundColor").ignoresSafeArea()) 
     }
 }
 
@@ -70,11 +96,11 @@ struct MapView: View {
             MapAnnotation(coordinate: item.coordinate) {
                 Image(systemName: "mappin.circle.fill")
                     .font(.title)
-                    .foregroundColor(.red)
+                    .foregroundColor(Color("PrimaryColor"))
             }
         }
         .frame(height: 220)
-        .cornerRadius(12)
+        .cornerRadius(16)
     }
 }
 

@@ -30,6 +30,7 @@ struct ProductsView: View {
                 }
                 .padding()
             }
+            .background(Color("BackgroundColor").ignoresSafeArea()) 
             .navigationTitle("Produkti")
             .onAppear {
                 viewModel.loadProducts()

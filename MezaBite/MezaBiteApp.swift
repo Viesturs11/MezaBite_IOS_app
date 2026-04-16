@@ -16,6 +16,7 @@ struct MezaBiteApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(cartVM)
+                .tint(Color("PrimaryColor"))
         }
     }
 }

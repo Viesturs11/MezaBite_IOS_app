@@ -18,8 +18,7 @@ struct CheckoutView: View {
     
     @State private var createdOrder: Order?
     @State private var navigateToOrder = false
-    
-    @State private var isLoading = false // 👈 JAUNS
+    @State private var isLoading = false
     
     var orderID: Int {
         UserDefaults.standard.integer(forKey: "orderID") + 1
@@ -33,55 +32,97 @@ struct CheckoutView: View {
                     Text("Pasūtījuma noformēšana")
                         .font(.title)
                         .bold()
+                        .foregroundColor(Color("TextPrimary"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Group {
+                    VStack(spacing: 12) {
                         TextField("Vārds", text: $name)
+                            .textInputAutocapitalization(.words)
+                        
                         TextField("Telefons", text: $phone)
+                            .keyboardType(.phonePad)
+                        
                         TextField("E-pasts", text: $email)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        
                         TextField("Adrese", text: $address)
+                            .textInputAutocapitalization(.words)
                     }
-                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                    .background(Color("CardColor"))
+                    .cornerRadius(16)
                     
-                    Divider()
-                    
-                    Text("Pasūtījums")
-                        .font(.headline)
-                    
-                    ForEach(cartVM.items) { item in
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Pasūtījums")
+                            .font(.headline)
+                            .foregroundColor(Color("TextPrimary"))
+                        
+                        ForEach(cartVM.items) { item in
+                            HStack(alignment: .top) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(item.product.name)
+                                        .foregroundColor(Color("TextPrimary"))
+                                    
+                                    Text("Daudzums: \(item.quantity)")
+                                        .font(.subheadline)
+                                        .foregroundColor(Color("TextSecondary"))
+                                }
+                                
+                                Spacer()
+                                
+                                Text("€\(item.product.price * Double(item.quantity), specifier: "%.2f")")
+                                    .foregroundColor(Color("TextPrimary"))
+                            }
+                            .padding(.vertical, 4)
+                            
+                            Divider()
+                        }
+                        
                         HStack {
-                            Text(item.product.name)
+                            Text("Kopā")
+                                .font(.title3)
+                                .bold()
+                                .foregroundColor(Color("TextPrimary"))
+                            
                             Spacer()
-                            Text("\(item.quantity)x")
-                            Text("€\(item.product.price * Double(item.quantity), specifier: "%.2f")")
+                            
+                            Text("€\(cartVM.totalPrice, specifier: "%.2f")")
+                                .font(.title3)
+                                .bold()
+                                .foregroundColor(Color("PrimaryColor"))
                         }
                     }
+                    .padding()
+                    .background(Color("CardColor"))
+                    .cornerRadius(16)
                     
-                    Divider()
-                    
-                    Text("Kopā: €\(cartVM.totalPrice, specifier: "%.2f")")
-                        .bold()
-                    
-                    // ✅ UZLABOTA POGA
                     Button {
                         submitOrder()
                     } label: {
                         if isLoading {
                             ProgressView()
+                                .tint(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
                         } else {
                             Text("Apstiprināt pasūtījumu")
+                                .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding()
                         }
                     }
-                    .background(isValid ? Color.green : Color.gray)
+                    .background(isValid ? Color("PrimaryColor") : Color.gray)
                     .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .disabled(!isValid || isLoading) // 👈 bloķē klikus
+                    .cornerRadius(14)
+                    .disabled(!isValid || isLoading)
                 }
                 .padding()
             }
+            .background(Color("BackgroundColor").ignoresSafeArea())
+            .navigationTitle("Checkout")
+            .navigationBarTitleDisplayMode(.inline)
         }
         .navigationDestination(isPresented: $navigateToOrder) {
             OrderView(order: createdOrder)
@@ -97,7 +138,7 @@ struct CheckoutView: View {
     
     func submitOrder() {
         
-        guard !isLoading else { return } // 👈 anti double click
+        guard !isLoading else { return }
         isLoading = true
         
         let itemsCopy = cartVM.items
@@ -126,7 +167,6 @@ struct CheckoutView: View {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
         request.httpBody = try? JSONSerialization.data(withJSONObject: orderData)
         
         URLSession.shared.dataTask(with: request) { _, _, error in
@@ -135,13 +175,12 @@ struct CheckoutView: View {
                 print("Error:", error)
                 
                 DispatchQueue.main.async {
-                    isLoading = false // 👈 svarīgi
+                    isLoading = false
                 }
                 return
             }
             
             DispatchQueue.main.async {
-                
                 createdOrder = Order(
                     id: orderID,
                     items: itemsCopy,
@@ -149,11 +188,8 @@ struct CheckoutView: View {
                 )
                 
                 UserDefaults.standard.set(orderID, forKey: "orderID")
-                
                 cartVM.items.removeAll()
-                
-                isLoading = false // 👈 atslēdz loading
-                
+                isLoading = false
                 navigateToOrder = true
             }
             

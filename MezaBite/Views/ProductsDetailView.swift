@@ -13,78 +13,104 @@ struct ProductDetailView: View {
     
     let product: Product
     @EnvironmentObject var cartVM: CartViewModel
+    
     @State private var showAlert = false
     @State private var quantity = 1
     
     var body: some View {
-        VStack(spacing: 20) {
-            
-            Image(product.image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 200)
-            
-            Text(product.name)
-                .font(.title)
-                .bold()
-            
-            Text(product.description)
-                .foregroundColor(.gray)
-            
-            Text("€\(product.price, specifier: "%.2f")")
-                .font(.title2)
-                .foregroundColor(.green)
-            
-            // ➕➖ izvēle (UZLABOTS)
-            HStack(spacing: 20) {
+        ScrollView {
+            VStack(spacing: 20) {
                 
-                Button(action: {
-                    if quantity > 1 { quantity -= 1 }
-                }) {
-                    Image(systemName: "minus")
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(10)
-                }
-                
-                Text("\(quantity)")
-                    .font(.title2)
-                    .frame(minWidth: 40)
-                
-                Button(action: {
-                    quantity += 1
-                }) {
-                    Image(systemName: "plus")
-                        .font(.title2)
-                        .frame(width: 44, height: 44)
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-            }
-            
-            // 🛒 POGA (uzlabota)
-            Button(action: {
-                for _ in 0..<quantity {
-                    cartVM.addToCart(product)
-                }
-                showAlert = true
-            }) {
-                Text("Pievienot grozam")
-                    .frame(maxWidth: .infinity)
+                // 🖼️ ATTĒLS
+                Image(product.image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 220)
                     .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
+                    .background(Color("CardColor"))
+                    .cornerRadius(16)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    
+                    Text(product.name)
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(Color("TextPrimary"))
+                    
+                    Text(product.description)
+                        .foregroundColor(Color("TextSecondary"))
+                    
+                    Text("€\(product.price, specifier: "%.2f")")
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(Color("PrimaryColor"))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // ➕➖ QUANTITY BLOKS
+                HStack {
+                    
+                    Text("Daudzums")
+                        .foregroundColor(Color("TextPrimary"))
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 16) {
+                        
+                        Button {
+                            if quantity > 1 { quantity -= 1 }
+                        } label: {
+                            Image(systemName: "minus")
+                                .frame(width: 36, height: 36)
+                                .background(Color("CardColor"))
+                                .foregroundColor(Color("TextPrimary"))
+                                .cornerRadius(8)
+                        }
+                        
+                        Text("\(quantity)")
+                            .font(.headline)
+                            .frame(minWidth: 30)
+                            .foregroundColor(Color("TextPrimary"))
+                        
+                        Button {
+                            quantity += 1
+                        } label: {
+                            Image(systemName: "plus")
+                                .frame(width: 36, height: 36)
+                                .background(Color("PrimaryColor"))
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        }
+                    }
+                }
+                .padding()
+                .background(Color("CardColor"))
+                .cornerRadius(16)
+                
+                // 🛒 POGA
+                Button {
+                    for _ in 0..<quantity {
+                        cartVM.addToCart(product)
+                    }
+                    showAlert = true
+                } label: {
+                    Text("Pievienot grozam")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color("PrimaryColor"))
+                        .foregroundColor(.white)
+                        .cornerRadius(14)
+                }
+                
+                .alert("Pievienots grozam ✅", isPresented: $showAlert) {
+                    Button("OK", role: .cancel) {}
+                }
             }
-            
-            .alert("Pievienots grozam ✅", isPresented: $showAlert) {
-                Button("OK", role: .cancel) {}
-            }
-            
-            Spacer()
+            .padding()
         }
-        .padding()
+        .background(Color("BackgroundColor").ignoresSafeArea()) // 👈 svarīgi
+        .navigationTitle("Produkts")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

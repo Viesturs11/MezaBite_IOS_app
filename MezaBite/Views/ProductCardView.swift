@@ -19,19 +19,20 @@ struct ProductCardView: View {
                 .scaledToFill()
                 .frame(height: 120)
                 .clipped()
-                .cornerRadius(10)
+                .cornerRadius(12)
             
             Text(product.name)
                 .font(.headline)
+                .foregroundColor(Color("TextPrimary"))
+                .lineLimit(2)
             
             Text("€\(product.price, specifier: "%.2f")")
                 .font(.subheadline)
-                .foregroundColor(.green)
+                .foregroundColor(Color("PrimaryColor"))
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(15)
-        .shadow(radius: 5)
+        .background(Color("CardColor")) // 👈 tava krāsa
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.1), radius: 6)
     }
 }
-
