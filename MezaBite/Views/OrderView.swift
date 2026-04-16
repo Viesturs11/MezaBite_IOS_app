@@ -10,20 +10,20 @@
 //  MezaBite
 //
 //  Created by Viesturs Karlivans on 14/04/2026.
-// Pagaidam ka rezerves variants!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import SwiftUI
 
 struct OrderView: View {
     
     let order: Order?
+    @Environment(\.dismiss) var dismiss   // ✅ PIEVIENOTS
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 
                 // 🧾 ID
-                Text("Pasūtījums #\(order?.id ?? 0)")
+                Text("Pavadzīme Nr.:\(order?.id ?? 0)")
                     .font(.title)
                     .bold()
                 
@@ -64,9 +64,9 @@ struct OrderView: View {
                     .foregroundColor(.green)
                     .padding(.top)
                 
-                // 🔙 atpakaļ poga (optional)
-                NavigationLink("Atpakaļ uz sākumu") {
-                    RootView()
+                // 🔙 ATGRIEZTIES (LABOTS)
+                Button("Atpakaļ uz sākumu") {
+                    dismiss()
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -76,6 +76,6 @@ struct OrderView: View {
             }
             .padding()
         }
-        .navigationBarBackButtonHidden(true) // 🔥 neļauj atgriezties uz checkout
+        .navigationBarBackButtonHidden(true)
     }
 }

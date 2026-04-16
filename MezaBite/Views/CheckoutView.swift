@@ -19,6 +19,8 @@ struct CheckoutView: View {
     @State private var createdOrder: Order?
     @State private var navigateToOrder = false
     
+    @State private var isLoading = false // 👈 JAUNS
+    
     var orderID: Int {
         UserDefaults.standard.integer(forKey: "orderID") + 1
     }
@@ -27,13 +29,11 @@ struct CheckoutView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                   
                     
                     Text("Pasūtījuma noformēšana")
                         .font(.title)
                         .bold()
                     
-                    // 👤 klienta dati
                     Group {
                         TextField("Vārds", text: $name)
                         TextField("Telefons", text: $phone)
@@ -44,7 +44,6 @@ struct CheckoutView: View {
                     
                     Divider()
                     
-                    // 🛒 grozs
                     Text("Pasūtījums")
                         .font(.headline)
                     
@@ -62,27 +61,33 @@ struct CheckoutView: View {
                     Text("Kopā: €\(cartVM.totalPrice, specifier: "%.2f")")
                         .bold()
                     
-                    // ✅ POGA
-                    Button("Apstiprināt pasūtījumu") {
+                    // ✅ UZLABOTA POGA
+                    Button {
                         submitOrder()
+                    } label: {
+                        if isLoading {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                        } else {
+                            Text("Apstiprināt pasūtījumu")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                        }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
                     .background(isValid ? Color.green : Color.gray)
                     .foregroundColor(.white)
                     .cornerRadius(12)
-                    .disabled(!isValid)
+                    .disabled(!isValid || isLoading) // 👈 bloķē klikus
                 }
                 .padding()
-                
-              }
+            }
         }
         .navigationDestination(isPresented: $navigateToOrder) {
             OrderView(order: createdOrder)
         }
     }
     
-    // ✅ validācija
     var isValid: Bool {
         !name.isEmpty &&
         !address.isEmpty &&
@@ -90,10 +95,11 @@ struct CheckoutView: View {
         phone.filter { $0.isNumber }.count >= 8
     }
     
-    // 🚀 submit
     func submitOrder() {
         
-        // 🧾 saglabā kopiju PIRMS dzēšanas
+        guard !isLoading else { return } // 👈 anti double click
+        isLoading = true
+        
         let itemsCopy = cartVM.items
         let totalCopy = cartVM.totalPrice
         
@@ -113,6 +119,7 @@ struct CheckoutView: View {
         
         guard let url = URL(string: "https://script.google.com/macros/s/AKfycbzGP4YbBhHVgecTOlLjpnJV7VZCGQAOukfBTmXnJrmLIEURsV5ZKmGdNlEBXYUk-d7MJQ/exec") else {
             print("Invalid URL")
+            isLoading = false
             return
         }
         
@@ -126,25 +133,27 @@ struct CheckoutView: View {
             
             if let error = error {
                 print("Error:", error)
+                
+                DispatchQueue.main.async {
+                    isLoading = false // 👈 svarīgi
+                }
                 return
             }
             
             DispatchQueue.main.async {
                 
-                // 🧾 izveido order snapshot
                 createdOrder = Order(
                     id: orderID,
                     items: itemsCopy,
                     total: totalCopy
                 )
                 
-                // 💾 saglabā ID
                 UserDefaults.standard.set(orderID, forKey: "orderID")
                 
-                // 🧹 iztīra grozu
                 cartVM.items.removeAll()
                 
-                // 👉 pāriet uz OrderView
+                isLoading = false // 👈 atslēdz loading
+                
                 navigateToOrder = true
             }
             
