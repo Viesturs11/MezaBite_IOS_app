@@ -29,12 +29,14 @@ struct CheckoutView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     
+                    // 🧾 TITLE
                     Text("Pasūtījuma noformēšana")
                         .font(.title)
                         .bold()
                         .foregroundColor(Color("TextPrimary"))
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
+                    // 👤 FORM
                     VStack(spacing: 12) {
                         TextField("Vārds", text: $name)
                             .textInputAutocapitalization(.words)
@@ -54,6 +56,7 @@ struct CheckoutView: View {
                     .background(Color("CardColor"))
                     .cornerRadius(16)
                     
+                    // 🛒 ORDER SUMMARY
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Pasūtījums")
                             .font(.headline)
@@ -75,7 +78,6 @@ struct CheckoutView: View {
                                 Text("€\(item.product.price * Double(item.quantity), specifier: "%.2f")")
                                     .foregroundColor(Color("TextPrimary"))
                             }
-                            .padding(.vertical, 4)
                             
                             Divider()
                         }
@@ -98,6 +100,7 @@ struct CheckoutView: View {
                     .background(Color("CardColor"))
                     .cornerRadius(16)
                     
+                    // ✅ BUTTON
                     Button {
                         submitOrder()
                     } label: {
@@ -129,6 +132,7 @@ struct CheckoutView: View {
         }
     }
     
+    // ✅ VALIDĀCIJA
     var isValid: Bool {
         !name.isEmpty &&
         !address.isEmpty &&
@@ -136,6 +140,7 @@ struct CheckoutView: View {
         phone.filter { $0.isNumber }.count >= 8
     }
     
+    // 🚀 SUBMIT
     func submitOrder() {
         
         guard !isLoading else { return }
@@ -181,11 +186,20 @@ struct CheckoutView: View {
             }
             
             DispatchQueue.main.async {
+                
                 createdOrder = Order(
                     id: orderID,
                     items: itemsCopy,
-                    total: totalCopy
+                    total: totalCopy,
+                    name: name,
+                    phone: phone,
+                    address: address
                 )
+                
+                // 🔥 SAGLABĀ ORDER (DOWNLOAD DATA PRASĪBA)
+                if let createdOrder {
+                    saveOrder(createdOrder)
+                }
                 
                 UserDefaults.standard.set(orderID, forKey: "orderID")
                 cartVM.items.removeAll()
@@ -194,5 +208,24 @@ struct CheckoutView: View {
             }
             
         }.resume()
+    }
+    
+    // 💾 SAVE ORDER
+    func saveOrder(_ order: Order) {
+        var savedOrders = loadOrders()
+        savedOrders.append(order)
+        
+        if let data = try? JSONEncoder().encode(savedOrders) {
+            UserDefaults.standard.set(data, forKey: "savedOrders")
+        }
+    }
+    
+    // 📥 LOAD ORDERS
+    func loadOrders() -> [Order] {
+        guard let data = UserDefaults.standard.data(forKey: "savedOrders"),
+              let orders = try? JSONDecoder().decode([Order].self, from: data) else {
+            return []
+        }
+        return orders
     }
 }

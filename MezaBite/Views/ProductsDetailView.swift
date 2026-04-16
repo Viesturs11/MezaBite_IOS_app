@@ -17,11 +17,15 @@ struct ProductDetailView: View {
     @State private var showAlert = false
     @State private var quantity = 1
     
+    // 🔥 ANIMĀCIJAS
+    @State private var animateButton = false
+    @State private var floatImage = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 
-                // 🖼️ ATTĒLS
+                // 🐝 ATTĒLS AR “FLOAT”
                 Image(product.image)
                     .resizable()
                     .scaledToFit()
@@ -29,6 +33,11 @@ struct ProductDetailView: View {
                     .padding()
                     .background(Color("CardColor"))
                     .cornerRadius(16)
+                    .offset(y: floatImage ? -5 : 5)
+                    .animation(.easeInOut(duration: 2).repeatForever(), value: floatImage)
+                    .onAppear {
+                        floatImage = true
+                    }
                 
                 VStack(alignment: .leading, spacing: 10) {
                     
@@ -47,7 +56,7 @@ struct ProductDetailView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // ➕➖ QUANTITY BLOKS
+                // ➕➖ QUANTITY
                 HStack {
                     
                     Text("Daudzums")
@@ -58,7 +67,11 @@ struct ProductDetailView: View {
                     HStack(spacing: 16) {
                         
                         Button {
-                            if quantity > 1 { quantity -= 1 }
+                            if quantity > 1 {
+                                withAnimation {
+                                    quantity -= 1
+                                }
+                            }
                         } label: {
                             Image(systemName: "minus")
                                 .frame(width: 36, height: 36)
@@ -73,7 +86,9 @@ struct ProductDetailView: View {
                             .foregroundColor(Color("TextPrimary"))
                         
                         Button {
-                            quantity += 1
+                            withAnimation {
+                                quantity += 1
+                            }
                         } label: {
                             Image(systemName: "plus")
                                 .frame(width: 36, height: 36)
@@ -87,12 +102,25 @@ struct ProductDetailView: View {
                 .background(Color("CardColor"))
                 .cornerRadius(16)
                 
-                // 🛒 POGA
+                // 🛒 POGA AR ANIMĀCIJU
                 Button {
+                    
+                    // 🔥 bounce efekts
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                        animateButton = true
+                    }
+                    
                     for _ in 0..<quantity {
                         cartVM.addToCart(product)
                     }
+                    
                     showAlert = true
+                    
+                    // reset animāciju
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        animateButton = false
+                    }
+                    
                 } label: {
                     Text("Pievienot grozam")
                         .font(.headline)
@@ -102,6 +130,7 @@ struct ProductDetailView: View {
                         .foregroundColor(.white)
                         .cornerRadius(14)
                 }
+                .scaleEffect(animateButton ? 0.9 : 1.0) // 👈 animācija
                 
                 .alert("Pievienots grozam ✅", isPresented: $showAlert) {
                     Button("OK", role: .cancel) {}
@@ -109,7 +138,7 @@ struct ProductDetailView: View {
             }
             .padding()
         }
-        .background(Color("BackgroundColor").ignoresSafeArea()) // 👈 svarīgi
+        .background(Color("BackgroundColor").ignoresSafeArea())
         .navigationTitle("Produkts")
         .navigationBarTitleDisplayMode(.inline)
     }

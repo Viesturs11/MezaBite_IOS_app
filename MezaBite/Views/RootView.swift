@@ -32,12 +32,19 @@ struct RootView: View {
                 }
                 .tag(2)
             
+            // 🔥 JAUNA SADALA
+            OrderHistoryView()
+                .tabItem {
+                    Label("Vēsture", systemImage: "clock")
+                }
+                .tag(3)
+            
             ContactView()
                 .tabItem {
                     Label("Kontakti", systemImage: "phone")
                 }
-                .tag(3)
+                .tag(4)
         }
-        .environment(\.selectedTab, $selectedTab) // padod uz leju
+        .environment(\.selectedTab, $selectedTab)
     }
 }
