@@ -17,6 +17,7 @@ struct OrderView: View {
     
     let order: Order?
     @Environment(\.dismiss) var dismiss   // ✅ PIEVIENOTS
+    @Environment(\.selectedTab) var selectedTab
     
     var body: some View {
         ScrollView {
@@ -66,6 +67,7 @@ struct OrderView: View {
                 
                 // 🔙 ATGRIEZTIES (LABOTS)
                 Button("Atpakaļ uz sākumu") {
+                    selectedTab?.wrappedValue = 0 // 👈 pāriet uz Home
                     dismiss()
                 }
                 .frame(maxWidth: .infinity)
